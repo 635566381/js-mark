@@ -35,6 +35,14 @@ interface opsConfig{
     options?:options  //配置
 }
 
+interface clickInfo {
+    el:HTMLElement  // 点击的元素
+    uids:string[] // 点击的元素的uid 一直到顶级元素的uids  覆盖情况多次标的uids
+    uid:string // 标注文本节点的唯一id，会绑定到节点身上的data-selector属性 此id可用于清除当前标注节点
+    offsetTop:number
+    offsetLeft:number
+}
+
 interface markRange extends Range{
     storeRenderOther?:any; //来自jsMark.renderStore方法的用户自定义参数
 }

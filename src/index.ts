@@ -14,13 +14,14 @@ class JsMark {
     private _selection: Nullable<Selection>;
     public onSelected: Nullable<Function> = null;
     public onClick: Nullable<Function> = null;
+    public onError: Nullable<Function> = null;
 
     constructor(ops: opsConfig) {
 
-        const ele =markContainer= this._element = ops.el;
+        const ele = markContainer = this._element = ops.el;
         this._selection = window.getSelection();
 
-        if (ele.nodeType !== 1) {
+        if (!ele || ele.nodeType !== 1) {
             this._onError("请挂载dom节点");
         }
         if (!this._selection) {
@@ -59,7 +60,6 @@ class JsMark {
           }
         })
       }
-
     private _onClick(e: Event) {
         if (e.target !== null && "dataset" in e.target) {
             let selectorId = (e.target as HTMLTextAreaElement).dataset.selector;
@@ -67,14 +67,29 @@ class JsMark {
                 let eleArr = document.querySelectorAll(`span[${markSelector}="${selectorId}"]`);
              
                 const {top:offsetTop,left:offsetLeft} =  Util.getOffset(eleArr[0] as HTMLElement,markContainer)
-                
-                this.onClick && this.onClick({uid:selectorId,offsetTop,offsetLeft});
+                const uids = this._getUids(e.target, []);
+                this.onClick && this.onClick({el:e.target,uids:uids,uid:selectorId,offsetTop,offsetLeft});
             }
         }
     }
 
+    private _getUids(ele: Element, uids: string[]): string[] {
+        if (!ele || ele == this._element) {
+            return uids
+        }
+        if (ele?.getAttribute(markSelector)) {
+            uids.push(String(ele?.getAttribute(markSelector)))
+        }
+        this._getUids(ele?.parentNode as Element, uids)
+        return uids
+    }
+
     private _onError(e: string) {
-        throw new Error(e)
+        if (this.onError) {
+            this.onError(e)
+        } else {
+            throw new Error(e)
+        }
     }
 
     private _onSelected(e: Selected | string) {

@@ -5391,9 +5391,10 @@
         constructor(ops) {
             this.onSelected = null;
             this.onClick = null;
+            this.onError = null;
             const ele = markContainer = this._element = ops.el;
             this._selection = window.getSelection();
-            if (ele.nodeType !== 1) {
+            if (!ele || ele.nodeType !== 1) {
                 this._onError("请挂载dom节点");
             }
             if (!this._selection) {
@@ -5431,12 +5432,28 @@
                 if (selectorId) {
                     let eleArr = document.querySelectorAll(`span[${markSelector}="${selectorId}"]`);
                     const { top: offsetTop, left: offsetLeft } = getOffset(eleArr[0], markContainer);
-                    this.onClick && this.onClick({ uid: selectorId, offsetTop, offsetLeft });
+                    const uids = this._getUids(e.target, []);
+                    this.onClick && this.onClick({ el: e.target, uids: uids, uid: selectorId, offsetTop, offsetLeft });
                 }
             }
         }
+        _getUids(ele, uids) {
+            if (!ele || ele == this._element) {
+                return uids;
+            }
+            if (ele === null || ele === void 0 ? void 0 : ele.getAttribute(markSelector)) {
+                uids.push(String(ele === null || ele === void 0 ? void 0 : ele.getAttribute(markSelector)));
+            }
+            this._getUids(ele === null || ele === void 0 ? void 0 : ele.parentNode, uids);
+            return uids;
+        }
         _onError(e) {
-            throw new Error(e);
+            if (this.onError) {
+                this.onError(e);
+            }
+            else {
+                throw new Error(e);
+            }
         }
         _onSelected(e) {
             this.onSelected && this.onSelected(e);

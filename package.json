@@ -1,14 +1,17 @@
 {
-  "name": "js-mark",
-  "version": "1.0.6",
-  "description": "js节点高亮插件，文本标注",
+  "name": "@juexiao/juexiao-mark",
+  "version": "1.0.7",
+  "description": "js节点高亮插件，文本标注 基于改开源项目优化 添加onError onClick返回值",
   "license": "ISC",
+  "scope": "@juexiao",
   "author": "BigCoal <1048506792@qq.com>",
   "main": "dist/js-mark.js",
   "homepage": "https://github.com/know-vampire/js-annotation.git",
   "scripts": {
     "dev": "rollup --config -w",
-    "build": "rollup --config"
+    "build": "rollup --config",
+    "npm-publish": "yarn build && npm publish --registry http://npm.juexiaotime.com/",
+    "npm-unpublish": "npm unpublish --force --registry  http://npm.juexiaotime.com/"
   },
   "repository": {
     "type": "git",

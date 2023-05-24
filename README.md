@@ -25,12 +25,12 @@
 
 ### 基本配置
 
-```js
+```ts
  import JsMark from "js-mark";
  const jsMark = new jsMark(opts:OPTS)
 ```
 创建一个新的jsMark实例,opts 会合并至默认配置 (如下所示).
-```js
+```ts
 interface OPTS {
     el:Element，
     options:{
@@ -60,7 +60,7 @@ interface OPTS {
 ##### 1.鼠标选中文本后的回调方法：``jsMark.onSelected``
 当``鼠标选中根节点下的文本``或``从后台获取数据使用jsMark.renderStore渲染已标注节点时``会触发此方法，该方法回调返回一个Selected已选中对象
 
-```js
+```ts
 
 interface Selected {
     textNodes: Text[]; //选中的所有文本节点
@@ -75,7 +75,7 @@ jsMark.onSelected = function (res:Selected) {};
 ##### 2.标注选中文本：``jsMark.repaintRange(nodes:Text[],uid:string,cssClass:string)``
 
 标注已经选中的文本，一般用在``jsMark.onSelected``回调方法内，接受三个参数
-```js
+```ts
 
 //定义
 interface RangeNodes{
@@ -102,15 +102,22 @@ jsMark.onSelected = function (res) {
 
 ##### 3.点击已经标注文本后的回调方法：``jsMark.onClick``
 点击已经标注的内容后，会触发``jsMark.onClick``方法,回掉方法接受一个uid为标签上唯一的一个id，可用于清除单个标注
-```js
+```ts
+interface clickInfo {
+    el:HTMLElement  // 点击的元素
+    uids:string[] // 点击的元素的uid 一直到顶级元素的uids  覆盖情况多次标的uids
+    uid:string // 标注文本节点的唯一id，会绑定到节点身上的data-selector属性 此id可用于清除当前标注节点
+    offsetTop:number
+    offsetLeft:number
+}
 
-jsMark.onClick = function (uid:string) {};
+jsMark.onClick = function (info: clickInfo) {};
 
 ```
 
 ##### 4.通过数据去标注根节点下的数据：``jsMark.renderStore()``
 
-```js
+```ts
 
 //定义
 interface SelectInfo{
@@ -128,7 +135,7 @@ jsMark.renderStore([{text:"测试",offset:20}])
 
 ##### 5.查找跟节点下的单个词组：``jsMark.findWord``
 通过``jsMark.findWord``查找文档中所有的可标注文本位置，返回相对于跟节点的偏移量
-```js
+```ts
 //定义
 declare type Nullable<T> = T | null;
 
@@ -145,22 +152,22 @@ jsMark.findWord("标注文本");
 ```
 ##### 6.清除单个标注：``jsMark.clearMark``
 清除标签上data-selector属性为唯一uid的标签标注
-```js
+```ts
 jsMark.deleteMark(uid);
 ```
 ##### 7.清除所有标注：``jsMark.clearMarkAll``
-```js
+```ts
 jsMark.clearMarkAll();
 ```
 
 ##### 8.销毁事件：``jsMark.destroy``
-```js
+```ts
 jsMark.destroy();
 ```
 
 ##### 9.漂亮代码：``jsMark.beautifyHTML``
 当删除节点后，如果你不希望你的文本节点被拆离，可以调用此方法来格式化容器内的代码
-```js
+```ts
 jsMark.beautifyHTML();
 ```
 
